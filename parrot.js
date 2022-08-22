@@ -30,26 +30,25 @@ const cartinhas_diferentes = [
     'parrot_imagens/roofparrot.gif',
     'parrot_imagens/michaeljacksonparrot.gif'
 ]
-const contador = 0;
-let armazena_sorteio = []
+
 let ListaCartas = [];
 let ParesOrdenados = [];
 let numero_cartas = 0;
-let verificador = 0;
-let par = false
+let par = false;
+let verificaPar = []
 
 function comparador() {
     return Math.random() - 0.5;
 }
 
 function start() {
-    //prompt inicial
+    //prompt inicial.
     numero_cartas = prompt ("Com quantas cartas você quer jogar?");
     while (numero_cartas % 2 !== 0 || numero_cartas < 4){
         numero_cartas = prompt ("Escreva um número par maior que 3. Com quantas cartas você quer jogar?");
     }
 
-    //sorteio das diferentes cartas, colocando-as em pares numa nova lista embaralhada
+    //sorteio das diferentes cartas, colocando-as em pares numa nova lista embaralhada.
     let embaralhamento = cartinhas_diferentes.sort(comparador);
     const sorteio = [];
     for(let cont=0; cont < numero_cartas/2; cont++) {
@@ -57,11 +56,8 @@ function start() {
         sorteio.push(embaralhamento[cont]);
     }
     let sorteio_embaralhado = sorteio.sort(comparador);
-    for(let k=0; k <numero_cartas; k++) {
-        armazena_sorteio.push(sorteio_embaralhado[k])
-    }
     
-   //disposição inicial das cartas
+   //disposição inicial das cartas.
     for(let cont=0; cont < numero_cartas; cont++) {
         let campo = document.querySelector('.campocartas');
         ListaCartas.push( `<div onclick="cartaClicada(this)" class="carta n${cont}">
@@ -70,9 +66,8 @@ function start() {
         </div>`)
         campo.innerHTML = campo.innerHTML + ListaCartas[cont];
     }
-    console.log(armazena_sorteio)
 
-    //associação entre os pares distribuídos aleatoriamente
+    //associação entre os pares distribuídos aleatoriamente.
     for(let i=0; i <numero_cartas; i++) {
         for(let j=0; j <numero_cartas; j++) {
             if (i !== j) {
@@ -90,8 +85,48 @@ start()
 
 function cartaClicada(elemento) {
     const childimg =  elemento.childNodes;
-    childimg[1].classList.add('hidden')
-    childimg[3].classList.remove('hidden')
-    elemento.classList.add('efeito')
-}
+    //verificam se é a primeira carta do par ou a segunda.
+    if (verificaPar.length === 0) {
+        childimg[1].classList.add('hidden')
+        childimg[3].classList.remove('hidden')
+        elemento.classList.add('efeito') 
+        verificaPar.push(elemento.classList[1])
+    } else if(verificaPar.length === 1) {
+        //verifica se a segunda carta clicada não é a mesma que a anterior, isso lascaria o código.
+        //(como lascou quando não sabia disso)
+        if (verificaPar[verificaPar.lenght-1] !== elemento.classList[1]){
+            childimg[1].classList.add('hidden')
+            childimg[3].classList.remove('hidden')
+            elemento.classList.add('efeito') 
+            verificaPar.push(elemento.classList[1])
+            //compara as posições dos pares corretos com o par do verificaPar.
+            for (let p = 0; p < ParesOrdenados.length - 1; p++){
+                if (verificaPar[0] === ParesOrdenados[p][0] && verificaPar[1] === ParesOrdenados[p][1]){
+                    par = true
+                }
+            }
+            //se está correto, permanece na tela, se não, some.
+            if (par === false) {
+                setTimeout(efeito, 1000)
+            } else if (par === true) {
+                verificaPar = [];
+                par = false;
+            }
+        }
+    }
 
+    function efeito () {
+        //efeito de sumir
+        childimg[1].classList.remove('hidden')
+        childimg[3].classList.add('hidden')
+        elemento.classList.remove('efeito')
+
+        let localizar = document.querySelector(`.${verificaPar[0]}`)
+        const childimgAnterior = localizar.childNodes
+
+        childimgAnterior[1].classList.remove('hidden')
+        childimgAnterior[3].classList.add('hidden')
+        localizar.classList.remove('efeito')
+        verificaPar = []
+    }
+}
