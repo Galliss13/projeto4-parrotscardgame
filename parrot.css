@@ -42,11 +42,23 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all, 0.5s;
+    transform-style: preserve-3d;
 }
 
 .carta img {
     width: 135px;
     height: 135px;
+}
+
+.efeito {
+    transform: rotateY(180deg);
+}
+
+/* Interações com javascript */
+
+.hidden {
+    display: none;
 }
 
 @media (max-width: 540px){
