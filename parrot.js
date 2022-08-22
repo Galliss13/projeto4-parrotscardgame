@@ -44,9 +44,9 @@ function comparador() {
 
 function start() {
     //prompt inicial.
-    numero_cartas = prompt ("Com quantas cartas você quer jogar?");
-    while (numero_cartas % 2 !== 0 || numero_cartas < 4){
-        numero_cartas = prompt ("Escreva um número par maior que 3. Com quantas cartas você quer jogar?");
+    numero_cartas = prompt ("Com quantas cartas você quer jogar? Escolha entre 4 a 60 cartas");
+    while (numero_cartas % 2 !== 0 || numero_cartas < 4 || numero_cartas > 60){
+        numero_cartas = prompt ("Escreva um número par maior que 3 e menor que 61. Com quantas cartas você quer jogar?");
     }
 
     //sorteio das diferentes cartas, colocando-as em pares numa nova lista embaralhada.
@@ -80,7 +80,6 @@ function start() {
     }
     console.log(ParesOrdenados);
 }
-
 
 start()
 
@@ -143,7 +142,7 @@ function cartaClicada(elemento) {
             let campoReiniciado = document.querySelector ('.campocartas');
             campoReiniciado.innerHTML = ''
             start()
-            
+
         } else if (reinicia === 'não') {
             alert('Obrigado por jogar!')
         }
