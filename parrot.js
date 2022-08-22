@@ -31,11 +31,12 @@ const cartinhas_diferentes = [
     'parrot_imagens/michaeljacksonparrot.gif'
 ]
 
-let ListaCartas = [];
 let ParesOrdenados = [];
 let numero_cartas = 0;
 let par = false;
-let verificaPar = []
+let verificaPar = [];
+let pontos = 0;
+let jogadas = 0;
 
 function comparador() {
     return Math.random() - 0.5;
@@ -60,11 +61,11 @@ function start() {
    //disposição inicial das cartas.
     for(let cont=0; cont < numero_cartas; cont++) {
         let campo = document.querySelector('.campocartas');
-        ListaCartas.push( `<div onclick="cartaClicada(this)" class="carta n${cont}">
+
+        campo.innerHTML = campo.innerHTML + `<div onclick="cartaClicada(this)" class="carta n${cont}">
         <img src="parrot_imagens/front.png">
         <img class="hidden" src="${sorteio_embaralhado[cont]}">
-        </div>`)
-        campo.innerHTML = campo.innerHTML + ListaCartas[cont];
+        </div>`;
     }
 
     //associação entre os pares distribuídos aleatoriamente.
@@ -85,35 +86,68 @@ start()
 
 function cartaClicada(elemento) {
     const childimg =  elemento.childNodes;
+
     //verificam se é a primeira carta do par ou a segunda.
     if (verificaPar.length === 0) {
+        jogadas++
         childimg[1].classList.add('hidden')
         childimg[3].classList.remove('hidden')
         elemento.classList.add('efeito') 
         verificaPar.push(elemento.classList[1])
     } else if(verificaPar.length === 1) {
+
         //verifica se a segunda carta clicada não é a mesma que a anterior, isso lascaria o código.
         //(como lascou quando não sabia disso)
         if (verificaPar[verificaPar.lenght-1] !== elemento.classList[1]){
+            jogadas++
             childimg[1].classList.add('hidden')
             childimg[3].classList.remove('hidden')
             elemento.classList.add('efeito') 
             verificaPar.push(elemento.classList[1])
+
             //compara as posições dos pares corretos com o par do verificaPar.
             for (let p = 0; p < ParesOrdenados.length - 1; p++){
                 if (verificaPar[0] === ParesOrdenados[p][0] && verificaPar[1] === ParesOrdenados[p][1]){
                     par = true
                 }
             }
+
             //se está correto, permanece na tela, se não, some.
             if (par === false) {
                 setTimeout(efeito, 1000)
+
             } else if (par === true) {
                 verificaPar = [];
                 par = false;
+                pontos++
             }
         }
     }
+    //fim do jogo
+    if (pontos === numero_cartas/2) {
+        setTimeout(fim, 1000)
+    }
+
+    function fim() {
+        alert (`Você ganhou em ${jogadas} jogadas!`)
+        let reinicia = prompt ("Deseja reiniciar a partida")
+        if (reinicia === 'sim') {
+
+            //condições iniciais.
+            ParesOrdenados = [];
+            numero_cartas = 0;
+            par = false;
+            verificaPar = [];
+            pontos = 0;
+            jogadas = 0;
+            let campoReiniciado = document.querySelector ('.campocartas');
+            campoReiniciado.innerHTML = ''
+            start()
+            
+        } else if (reinicia === 'não') {
+            alert('Obrigado por jogar!')
+        }
+    }    
 
     function efeito () {
         //efeito de sumir
